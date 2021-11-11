@@ -33,7 +33,7 @@ export default class Generate extends React.Component {
                     isRunning: true,
                     workouts: new Array(workoutCount).fill(null)
                   });
-                  this.getProgress();
+                  // this.getProgress();
                 }}
                 type="button"
               >
