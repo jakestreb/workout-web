@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseUrl = `${process.env.serverUrl}:${process.env.serverPort}`;
+const baseUrl = process.env.serverUrl;
 
 export async function get(path, queryParams) {
 	try {
