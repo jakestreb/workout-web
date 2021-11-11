@@ -5,6 +5,7 @@ import * as api from '../api/controller';
 export default class Generate extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       isRunning: false,
       workouts: [],
