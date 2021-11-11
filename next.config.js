@@ -1,6 +1,7 @@
 module.exports = {
   env: {
     serverUrl: 'https://workout-catalog.herokuapp.com',
-    serverPort: '5751'
+    serverPort: '25228',
+    httpTimeout: 2000
   },
 }

@@ -8,7 +8,7 @@ export async function get(path, queryParams) {
 			params: queryParams,
 			baseURL: baseUrl,
 			paramsSerializer: params => qs.stringify(params),
-			timeout: 2000
+			timeout: process.env.httpTimeout
 		});
 		return data;
 	} catch (err) {
@@ -22,7 +22,7 @@ export async function post(path, queryParams, body) {
 		const { data } = await axios.post(path, body, {
 			params: queryParams,
 			baseURL: baseUrl,
-			timeout: 2000
+			timeout: process.env.httpTimeout
 		});
 		console.warn('data', data);
 		return data;
