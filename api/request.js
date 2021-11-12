@@ -1,6 +1,7 @@
 import axios from 'axios';
+import * as qs from 'qs';
 
-const baseUrl = process.env.SERVER_URL;
+const baseUrl = process.env.SERVER_HOST;
 
 export async function get(path, queryParams) {
 	try {
@@ -18,13 +19,11 @@ export async function get(path, queryParams) {
 
 export async function post(path, queryParams, body) {
 	try {
-		console.warn('calling post', baseUrl, path, body, queryParams);
 		const { data } = await axios.post(path, body, {
 			params: queryParams,
 			baseURL: baseUrl,
 			timeout: process.env.API_TIMEOUT
 		});
-		console.warn('data', data);
 		return data;
 	} catch (err) {
 		console.warn(`Error POST ${path}`, err);

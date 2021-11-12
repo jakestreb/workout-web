@@ -7,6 +7,11 @@ export default class Generate extends React.Component {
     super(props);
 
     this.state = {
+      target: {
+        name: 'back_day',
+        intensity: 5,
+        timeMinutes: 45
+      },
       isRunning: false,
       workouts: [],
       progress: [],
@@ -23,29 +28,40 @@ export default class Generate extends React.Component {
 
       <main>
         <div className="horizontal">
+          <select value={this.state.target.name} onChange={e => this.handleTargetNameChange(e)}>
+            <option value="chest_day">Chest</option>
+            <option value="back_day">Back</option>
+            <option value="leg_day">Leg</option>
+            <option value="arm_day">Arm</option>
+            <option value="chest_back_day">Chest/Back</option>
+            <option value="shoulder_day">Shoulder</option>
+          </select>
+          <input
+            type="number"
+            label="Intensity"
+            value={this.state.target.intensity}
+            onChange={e => this.handleIntensityChange(e)}
+          />
+          <input
+            type="number"
+            label="Time in minutes"
+            value={this.state.target.timeMinutes}
+            onChange={e => this.handleTimeChange(e)}
+          />
+        </div>
+        <div className="horizontal">
           <div className="vertical">
             {
-              !this.state.isRunning ? <button
-                onClick={async () => {
-                  console.warn('hey', api);
-                  const workoutCount = await api.startGenerator('back_day', 5, 45);
-                  this.setState({
-                    isRunning: true,
-                    workouts: new Array(workoutCount).fill(null)
-                  });
-                  // this.getProgress();
-                }}
-                type="button"
-              >
+              !this.state.isRunning ? <button onClick={() => this.startGenerator()} type="button">
               Start
               </button> : null
             }
             {
-              this.state.workouts.map((_, i) => this.renderWorkout(i))
+              this.state.isRunning ? this.state.workouts.map((_, i) => this.renderWorkout(i)) : null
             }
           </div>
           {
-            this.state.workouts[0] && this.state.progress ? <div className="vertical">
+            this.state.isRunning && this.state.workouts[0] ? <div className="vertical">
               {
                 renderWorkoutStats(this.state.workouts[0], this.state.progress[0])
               }
@@ -78,8 +94,8 @@ export default class Generate extends React.Component {
               const workoutObj = {
                 time: timeString(workout.time),
                 intensity: workout.intensity.toFixed(1),
-                sets: `${workout.sets}`.split(','),
-                activity: workout.activity.getMap()
+                sets: workout.sets.map(s => `${s.exercise} ${s.sets}x${s.reps}`),
+                activity: workout.activity
               };
               this.state.workouts.splice(i, 1, workoutObj);
               this.setState({
@@ -106,10 +122,50 @@ export default class Generate extends React.Component {
     </ol>;
   }
 
+  async startGenerator() {
+    const { name, intensity, timeMinutes } = this.state.target;
+    const workoutCount = await api.startGenerator(name, intensity, timeMinutes);
+    this.setState({
+      isRunning: true,
+      workouts: new Array(workoutCount).fill(null)
+    });
+    this.getProgress();
+  }
+
+  async stopGenerator() {
+    if (!this.state.isRunning) {
+      return;
+    }
+    this.setState({ isRunning: false });
+    const { name, intensity, timeMinutes } = this.state.target;
+    await api.stopGenerator(name, intensity, timeMinutes);
+  }
+
   async getProgress() {
+    if (!this.state.isRunning) {
+      return;
+    }
     const progress = await api.getProgress();
     this.setState({ progress });
     setTimeout(() => this.getProgress(), 500);
+  }
+
+  handleTargetNameChange(event) {
+    this.stopGenerator();
+    const { value } = event.target;
+    this.setState({ target: { ...this.state.target, name: value } });
+  }
+
+  handleIntensityChange(event) {
+    this.stopGenerator();
+    const { value } = event.target;
+    this.setState({ target: { ...this.state.target, intensity: value } });
+  }
+
+  handleTimeChange(event) {
+    this.stopGenerator();
+    const { value } = event.target;
+    this.setState({ target: { ...this.state.target, timeMinutes: value } });
   }
 }
 
