@@ -1,15 +1,13 @@
 import axios from 'axios';
 import * as qs from 'qs';
 
-const baseUrl = process.env.SERVER_HOST;
-
 export async function get(path, queryParams) {
 	try {
 		const { data } = await axios.get(path, {
 			params: queryParams,
-			baseURL: baseUrl,
+			baseURL: process.env.NEXT_PUBLIC_SERVER_HOST,
 			paramsSerializer: params => qs.stringify(params),
-			timeout: process.env.API_TIMEOUT
+			timeout: process.env.NEXT_PUBLIC_API_TIMEOUT
 		});
 		return data;
 	} catch (err) {
@@ -21,8 +19,8 @@ export async function post(path, queryParams, body) {
 	try {
 		const { data } = await axios.post(path, body, {
 			params: queryParams,
-			baseURL: baseUrl,
-			timeout: process.env.API_TIMEOUT
+			baseURL: process.env.NEXT_PUBLIC_SERVER_HOST,
+			timeout: process.env.NEXT_PUBLIC_API_TIMEOUT
 		});
 		return data;
 	} catch (err) {

@@ -5,7 +5,6 @@ export function addUser(name, gender, experience, primaryFocus) {
 }
 
 export function startGenerator(name, intensity, timeMinutes) {
-	console.warn('calling start');
 	return request.post('/start', {}, { name, intensity, timeMinutes });
 }
 
